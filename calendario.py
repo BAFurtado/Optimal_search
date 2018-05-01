@@ -66,12 +66,12 @@ def three_periods():
 
 
 def main(first, final):
-    iterator = 0
-    # iterator = 10000
+    # iterator = 0
+    iterator = 10000
     minimorum = Working(first, final)
     days = None, None, None
-    # while iterator > 0:
-    while minimorum.total_working_days() > 222:
+    while iterator > 0:
+    # while minimorum.total_working_days() > 222:
         leisure = Working(first, final)
         a, b, c = three_periods()
         leisure.schedule((a, b, c))
@@ -89,3 +89,13 @@ if "__main__" == __name__:
     first_day = date(2018, 1, 1)
     final_day = date(2018, 12, 31)
     main(first_day, final_day)
+
+    # my_holidays = Working(first_day, final_day)
+    # a, b, c = 5, 12, 13
+    # d1 = date(2018, 1, 15)
+    # d2 = date(2018, 7, 9)
+    # d3 = date(2018, 12, 11)
+    # my_holidays.apply_vacation(d1, a)
+    # my_holidays.apply_vacation(d2, b)
+    # my_holidays.apply_vacation(d3, c)
+    # print('Total working days for this configuration is {} days'.format(sum(my_holidays.df['not_working'] == False)))
