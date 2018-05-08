@@ -39,7 +39,7 @@ class Working:
         self.df.loc[self.df['date'] == d, 'not_working'] = True
         if offset != 0:
             for i in range(offset):
-                self.df.loc[self.df['date'] == (d + pd.Timedelta(days=(i + 1))), 'not_working'] = True
+                self.df.loc[self.df['date'] == (d + pd.Timedelta(days=(i))), 'not_working'] = True
 
     def find_starting_day(self):
         # Finds a random 'not_working' day set to False which means a good day to start the vacation.
@@ -71,7 +71,7 @@ def main(first, final):
     minimorum = Working(first, final)
     days = None, None, None
     while iterator > 0:
-    # while minimorum.total_working_days() > 222:
+    # while minimorum.total_working_days() > 223:
         leisure = Working(first, final)
         a, b, c = three_periods()
         leisure.schedule((a, b, c))
