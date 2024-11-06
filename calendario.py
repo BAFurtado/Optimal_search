@@ -31,9 +31,14 @@ class Working:
     def __init__(self, start, end):
         self.cal = BrazilHolidayCalendar()
         self.df = pd.DataFrame()
-        self.df['date'] = pd.date_range(start=start, end=end)
-        self.holidays = set(self.cal.holidays(start=start, end=end).date)  # Store holidays as a set for faster lookups
-        self.df['not_working'] = self.df['date'].apply(lambda x: x.dayofweek in [5, 6] or x.date() in self.holidays)
+        # Generate a date range and convert to datetime.date format
+        self.df['date'] = pd.date_range(start=start, end=end).date
+        # Store holidays as a set of datetime.date objects
+        self.holidays = set(self.cal.holidays(start=start, end=end).date)
+        # Calculate 'not_working' by checking if the day is a weekend or holiday
+        self.df['not_working'] = self.df['date'].apply(
+            lambda x: x.weekday() in [5, 6] or x in self.holidays
+        )
         self.starting_days = []
 
     def total_working_days(self):
@@ -49,7 +54,7 @@ class Working:
 
     def find_starting_day(self):
         # Finds a random 'not_working' day set to False which means a good day to start the vacation
-        valid_start_days = self.df[self.df['not_working'] == False]['date'].dt.date.tolist()
+        valid_start_days = self.df[self.df['not_working'] == False]['date'].tolist()
         if not valid_start_days:
             raise ValueError("No valid starting days available.")
         return choice(valid_start_days)
@@ -80,7 +85,7 @@ def main(first, final):
         a, b, c = three_periods()
         leisure.schedule((a, b, c))
 
-        if leisure.total_working_days() <= minimorum.total_working_days():
+        if leisure.total_working_days() < minimorum.total_working_days():
             minimorum = copy.deepcopy(leisure)
             days = a, b, c
 
@@ -97,15 +102,17 @@ if __name__ == "__main__":
     main(first_day, final_day)
 
     my_holidays = Working(first_day, final_day)
-    a, b, c = 4, 5, 21
+    a, b, c = (5, 9, 16)
     d1 = date(2025, 1, 6)
-    d2 = date(2025, 7, 14)
-    d3 = date(2025, 12, 3)
+    d2 = date(2025, 7, 7)
+    d3 = date(2025, 12, 8)
+    y = d1, d2, d3
     my_holidays.apply_vacation(d1, a)
     my_holidays.apply_vacation(d2, b)
     my_holidays.apply_vacation(d3, c)
 
+    print('')
     print(f'Total working days for this configuration is {my_holidays.total_working_days()} days')
     x = a, b, c
     for i in range(3):
-        print('Vacation period starts on {} and lasts for {} days'.format(my_holidays.starting_days[i], x[i]))
+        print('Vacation period starts on {} and lasts for {} days'.format(y[i], x[i]))
